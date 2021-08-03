@@ -1,0 +1,10 @@
+{
+  "name": "gr-logo",
+  "version": "1.0.0",
+  "description": "Geoff Ritter's personal logo as a webcomponent on canvas",
+  "main": "gr-logo.js",
+  "repository": "git@github.com:geoffritter/gr-logo.git",
+  "author": "Geoff Ritter <im@geoffritter.com>",
+  "license": "None",
+  "private": true
+}
