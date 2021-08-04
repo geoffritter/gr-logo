@@ -6,5 +6,10 @@
   "repository": "git@github.com:geoffritter/gr-logo.git",
   "author": "Geoff Ritter <im@geoffritter.com>",
   "license": "None",
-  "private": true
+  "private": true,
+  "scripts": {
+    "demo": "python -m http.server",
+    "docs": "jsdoc -d docs -R README.md gr-logo.js",
+    "docsprivate": "jsdoc -d docs -R README.md -p gr-logo.js"
+  }
 }
