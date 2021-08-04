@@ -64,7 +64,7 @@ class GRLogo extends HTMLElement {
             if (selected === THEME_NAME.test) {
                 selected === lastTheme
             }
-            this._theme = THEMES[keys[Math.random() * keys.length | 0]] || lastTheme;
+            this._theme = THEMES[selected] || lastTheme;
         } else {
             let t = THEMES[theme];
             this._theme = t || lastTheme;
@@ -405,8 +405,9 @@ const THEMES = {
         base: '#B40000',
         g: '#000000',
         r: '#FFFFFF',
-        routlinew: 3,
+        routlinew: 8,
         routlines: '#000000',
+        routlines: ['#e50000', '#ff8d00', '#ffee00', '#028121', '#004cff', '#770088'],
         bar: ['#000000'],
         text: ['#e50000', '#ff8d00', '#ffee00', '#028121', '#004cff', '#770088'],
     },
