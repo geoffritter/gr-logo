@@ -9,7 +9,7 @@
   "type": "module",
   "repository": "git@github.com:geoffritter/gr-logo.git",
   "author": "Geoff Ritter <im@geoffritter.com>",
-  "license": "None",
+  "license": "SEE THE LICENSE FILE",
   "private": true,
   "scripts": {
     "demo": "python -m http.server",
