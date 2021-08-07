@@ -4,11 +4,38 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>GR Logo</title>
-        <script src="../gr-logo.js" type="module" defer></script>
+        <script src="gr-logo/gr-logo.js" type="module" defer></script>
         <style>
             html, body {width: 100%; height: 100%; margin: 0; padding: 0;}
-            gr-logo {width: 100%; padding-top: 100%;}
+            main {
+                box-sizing: border-box;
+                display: flex;
+                justify-content: center;
+                align-content: center;
+                height: 100%;
+                margin: 0 auto;
+            }
+            gr-logo {box-sizing: border-box; width: 100%; height: 0%; padding-top: 100%;}
         </style>
     </head>
-    <gr-logo theme="random"></gr-logo>
+    <body>
+    <main><gr-logo theme="original"></gr-logo></main>
+    <script nonce="%nonce%">
+        (function() {
+            let fixSizes = function() {
+                let main = document.querySelector('main');
+                if (document.body.clientWidth > document.body.clientHeight) {
+                    main.style.width = document.body.clientHeight + 'px';
+                } else {
+                    main.style.width = null;
+                }
+                let padding = document.querySelector('gr-logo').padding | 0;
+                main.style.padding = padding + 'px';
+            };
+            let observer = new ResizeObserver(fixSizes);
+            observer.observe(document.querySelector('main'));
+            setTimeout(fixSizes, 100);
+        })();
+    </script>
+    </body>
 </html>
