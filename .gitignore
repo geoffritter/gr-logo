@@ -1,2 +1,6 @@
 docs/
 .vscode/
+node_modules/
+*.tgz
+yarn.lock
+package-lock.json

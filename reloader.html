@@ -1,0 +1,15 @@
+<script>
+(function() {
+"use strict";
+// Inserted by the development server to create a websocket and listen for a reload event.
+const socketUrl = ((path) => document.protocol === 'https:' ? `wss://${path}` : `ws://${path}`)(`${document.location.hostname}:%port%/socket`);
+let socket = new WebSocket(socketUrl, 'reload');
+let reload = false;
+socket.onmessage = event => {
+	if (event.data === 'reload' && !reload) {
+		reload = true;
+		fetch('/reload').then(() => location.reload());
+	}
+};
+})();
+</script>

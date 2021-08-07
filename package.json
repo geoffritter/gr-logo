@@ -2,7 +2,11 @@
   "name": "gr-logo",
   "version": "1.0.0",
   "description": "Geoff Ritter's personal logo as a webcomponent on canvas",
-  "main": "gr-logo.js",
+  "files": [
+    "src/gr-logo.js"
+  ],
+  "main": "src/gr-logo.js",
+  "type": "module",
   "repository": "git@github.com:geoffritter/gr-logo.git",
   "author": "Geoff Ritter <im@geoffritter.com>",
   "license": "None",
@@ -11,5 +15,14 @@
     "demo": "python -m http.server",
     "docs": "jsdoc -d docs -R README.md gr-logo.js",
     "docsprivate": "jsdoc -d docs -R README.md -p gr-logo.js"
+  },
+  "config": {
+    "http": "demo",
+    "port": "8000",
+    "websocketport": "8001",
+    "watch": true
+  },
+  "devDependencies": {
+    "ws": "^8.0.0"
   }
 }
