@@ -66,12 +66,20 @@ class GRLogo extends HTMLElement {
             }
             this._theme = THEMES[selected] || lastTheme;
         } else {
-            let t = THEMES[theme];
-            this._theme = t || lastTheme;
+            let t = THEME_NAME[theme];
+            this._theme = THEMES[t] || lastTheme;
         }
         if (this._ctx && !this._animating) {
             this._draw();
         }
+    }
+
+    /**
+     * Gets the margin width required by the logo styleguide.
+     */
+    get padding() {
+        let size = Math.min(this.clientWidth, this.clientHeight);
+        return size / 8;
     }
 
     static get observedAttributes() { return ['theme']; }
@@ -91,9 +99,10 @@ class GRLogo extends HTMLElement {
 
         let w = this._ctx.canvas.width;
         let h = this._ctx.canvas.height;
+        this._ctx.clearRect(0, 0, w, h);
+
         let x = Math.max(w, h);
         let scale = x / (SIZE.viewbox[2] - SIZE.viewbox[0]);
-
         this._ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
         // Back buffer
@@ -117,7 +126,8 @@ class GRLogo extends HTMLElement {
 
         // BAR
         if (x >= SIZE.minBarWidth) {
-            this._drawElement(scale, PATHS.bar, this._theme.bar, [SIZE.bar[0], SIZE.bar[1], SIZE.bar[2], SIZE.bar[1]])
+            let barpath = this._theme.barpath || PATHS.bar;
+            this._drawElement(scale, barpath, this._theme.bar, [SIZE.bar[0], SIZE.bar[1], SIZE.bar[2], SIZE.bar[1]])
         }
 
         // TEXT
@@ -363,6 +373,10 @@ export const THEME_NAME = {
     intersex: 'intersex',
     /** Other style background. */
     other: 'other',
+    /** GR on empty space */
+    gr: 'gr',
+    /** GR black and white variant */
+    blackwhite: 'blackwhite',
     /** Test background used to view all the features of the logo. */
     test: 'test'
 };
@@ -388,18 +402,18 @@ export const THEME_NAME = {
  */
 const THEMES = {
     original: {
-        base: '#b40000',
+        base: '#B40000',
         g: '#000000',
         r: '#FFFFFF',
         bar: '#000000',
         text: '#FFFFFF'
     },
     playfull: {
-        base: '#00a0e3',
-        g: '#ff78ff',
-        r: '#ffb400',
+        base: '#00A0E3',
+        g: '#FF78FF',
+        r: '#FFB400',
         bar: '#131313',
-        text: '#f7f7f7'
+        text: '#F7F7F7'
     },
     classy: {
         base: '#B40000',
@@ -407,12 +421,12 @@ const THEMES = {
         r: '#FFFFFF',
         routlinew: 8,
         routlines: '#000000',
-        routlines: ['#e50000', '#ff8d00', '#ffee00', '#028121', '#004cff', '#770088'],
+        routlines: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
         bar: ['#000000'],
-        text: ['#e50000', '#ff8d00', '#ffee00', '#028121', '#004cff', '#770088'],
+        text: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
     },
     rainbow: {
-        base: ['#e50000', '#ff8d00', '#ffee00', '#028121', '#004cff', '#770088'],
+        base: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
         g: '#000000',
         r: '#FFFFFF',
         bar: '#000000',
@@ -421,7 +435,7 @@ const THEMES = {
     philadelphia: {
         base: '#794E0F',
         g: '#000000',
-        r: ['#e50000', '#ff8d00', '#ffee00', '#028121', '#004cff', '#770088'],
+        r: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
         bar: '#000000',
         text: '#FFFFFF'
     },
@@ -429,7 +443,7 @@ const THEMES = {
         base: ['#5BCFFB', '#F5ABB9', '#FFFFFF', '#F5ABB9', '#5BCFFB'],
         g: '#000000',
         r: '#FFFFFF',
-        routlinew: 3,
+        routlinew: 4,
         routlines: '#000000',
         bar: '#000000',
         text: '#FFFFFF'
@@ -438,10 +452,10 @@ const THEMES = {
         base: '#FFD800',
         g: '#7902AA',
         r: '#FFD800',
-        routlinew: 3,
+        routlinew: 4,
         routlines: '#7902AA',
         bar: '#131313',
-        text: '#f7f7f7'
+        text: '#F7F7F7'
     },
     other: {
         base: '#6BD6F7',
@@ -452,6 +466,25 @@ const THEMES = {
         bar: '#000000',
         text: '#FFFFFF'
     },
+    gr: {
+        base: 'transparent',
+        g: '#000000',
+        r: '#FFFFFF',
+        routlinew: 8,
+        routlines: '#000000',
+        bar: 'transparent',
+        text: 'transparent'
+    },
+    blackwhite: {
+        base: 'transparent',
+        g: '#000000',
+        r: '#FFFFFF',
+        routlinew: 8,
+        routlines: '#000000',
+        bar: '#000000',
+        barpath: new Path2D('M16,256a16 16 0 0 1 0-32h224a16 16 0 0 1 0 32Z'),
+        text: '#FFFFFF'
+    },
     // Contains a full static feature test.
     test: {
         base: ['#888888', '#AAAAAA'],
@@ -459,7 +492,7 @@ const THEMES = {
         base2: ['#888833', '#AAAA88'],
         g: ['#FF6666', 'rgba(255,0,0,0.5)'],
         r: ['rgba(0,255,0,0.5)', 'rgba(128,255,128,0.5)', 'rgba(255,255,255,0.5'],
-        routlinew: 3,
+        routlinew: 4,
         routlines: ['#FF6666','rgba(255,0,0,0.5)'],
         bar: ['#000000', 'rgba(255,255,255,0.8)'],
         text: ['#e50000', '#ff8d00', '#ffee00', '#028121', '#004cff', '#770088']
