@@ -69,7 +69,7 @@ const reloaderScriptHash = (() => {
       // Watch source directory changes and notify WebSocket clients.
       try {
         // Windows/OSX support recurisve directory watching.
-        fs.watch(serveDir, { recursive: true }, notifyClients);
+        fs.watch(process.cwd(), { recursive: true }, notifyClients);
       } catch (err) {
         if (err.code === 'ERR_FEATURE_UNAVAILABLE_ON_PLATFORM') {
           // Workaround for unsupported fs.watch recursive.
@@ -83,7 +83,7 @@ const reloaderScriptHash = (() => {
                 }
               });
             return list;
-          })(serveDir, [serveDir]);
+          })(process.cwd(), [process.cwd()]);
           watchDirs.forEach(function watchDirAndNotifyClients(dir) {
             fs.watch(dir, { recursive: false }, (type, filename) => {
               // Add a new directory to watch.
