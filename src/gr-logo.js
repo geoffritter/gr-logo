@@ -38,8 +38,7 @@
 class GRLogo extends HTMLElement {
     constructor(theme) {
         super();
-        let t = theme || this.getAttribute('theme');
-        this.setTheme(t);
+        if (theme) { this.theme = t; }
         this.attachShadow({mode: 'open'});
         let style = document.createElement('style');
         style.innerText = ':host { display: block; position: relative; } canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }';
@@ -55,9 +54,9 @@ class GRLogo extends HTMLElement {
      * Sets the theme of the logo to one of the supported values.
      * @param {THEME_NAME} theme The name of the theme to set.
      */
-    setTheme(theme) {
+    set theme(theme) {
         let lastTheme = this._theme || THEMES.original;
-        if (theme == 'random') {
+        if (theme == THEME_NAME.random) {
             let keys = Object.keys(THEME_NAME);
             // Exclude the test theme and assume it's the last theme defined.
             let selected = keys[Math.random() * (keys.length - 1) | 0];
@@ -69,9 +68,26 @@ class GRLogo extends HTMLElement {
             let t = THEME_NAME[theme];
             this._theme = THEMES[t] || lastTheme;
         }
+        if (this._theme.fill === false) {
+            this._fill = false;
+        }
         if (this._ctx && !this._animating) {
             this._draw();
         }
+    }
+
+    /**
+     * Gets the current fill state.
+     */
+    get fill() {
+        return this._fill;
+    }
+
+    /**
+     * Returns the size of the canvas inside the element.
+     */
+    get size() {
+        return [this._ctx.canvas.clientWidth, this._ctx.canvas.clientHeight];
     }
 
     /**
@@ -82,11 +98,21 @@ class GRLogo extends HTMLElement {
         return size / 8;
     }
 
-    static get observedAttributes() { return ['theme']; }
+    static get observedAttributes() { return Object.keys(ATTRIBUTES); }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'theme') {
-            this.setTheme(newValue);
+        switch(name) {
+            case 'theme':
+                this.theme = newValue;
+                break;
+            case 'fill':
+                if (this._theme && this._theme.fill === false) {
+                    this._fill = false;
+                } else {
+                    this._fill = (newValue !== null || newValue !== 'true');
+                }
+                this._resize();
+                break;
         }
     }
 
@@ -101,61 +127,127 @@ class GRLogo extends HTMLElement {
         let h = this._ctx.canvas.height;
         this._ctx.clearRect(0, 0, w, h);
 
-        let x = Math.max(w, h);
+        let x = Math.min(w, h);
         let scale = x / (SIZE.viewbox[2] - SIZE.viewbox[0]);
+        let reverseScale = (SIZE.viewbox[2] - SIZE.viewbox[0]) / x;
         this._ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
         // Back buffer
         this._bctx.canvas.width = w;
         this._bctx.canvas.height = h;
 
+        // Fill width/height
+        let fw = w * reverseScale;
+        let fh = h * reverseScale;
+
         // BASE
-        this._drawElement(scale, PATHS.base, this._theme.base, [SIZE.basev[0], SIZE.basev[1], SIZE.basev[0], SIZE.basev[3]])
+        if (this._fill) {
+            let hor = fw - 32;
+            let ver = fh - 32;
+            let basepath = new Path2D(`M0,16a16 16 0 0 1 16-16h${hor}a16 16 0 0 1 16 16v${ver}a16 16 0 0 1-16 16h-${hor}a16 16 0 0 1-16-16Z`);
+            this._drawElement(scale, null, basepath, this._theme.base, [0, 0, 0, ver])
+        } else {
+            this._drawElement(scale, null, PATHS.base, this._theme.base, [SIZE.basev[0], SIZE.basev[1], SIZE.basev[0], SIZE.basev[3]])
+        }
 
         // BASE2
         if (this._theme.base2path) {
-            this._drawElement(scale, this._theme.base2path, this._theme.base2, [SIZE.basev[0], SIZE.basev[1], SIZE.basev[0], SIZE.basev[3]])
+            // TODO: When set to fill, this path should be scaled to fit width/height and be clipped by the special basepath to get the rounded corners.
+            this._drawElement(scale, null, this._theme.base2path, this._theme.base2, [SIZE.basev[0], SIZE.basev[1], SIZE.basev[0], SIZE.basev[3]])
         }
 
+        // The GR should be centered horizontally in landscape and fill the height.
+        // In portrait, the GR should fill the width and be spaced at the top normally.
+        // (Total width - Scaled Viewbox Width) / 2
+        let c = w > h ? (w - ((SIZE.viewbox[2] - SIZE.viewbox[0]) * scale) ) / 2 : 0;
         // R
-        this._drawElement(scale, PATHS.r, this._theme.r, [SIZE.rv[0], SIZE.rv[1], SIZE.rv[0], SIZE.rv[3]],
+        this._drawElement(scale, [c,0], PATHS.r, this._theme.r, [SIZE.rv[0], SIZE.rv[1], SIZE.rv[0], SIZE.rv[3]],
             this._theme.routlinew, this._theme.routlines, [SIZE.rv[0], SIZE.rv[1], SIZE.rv[0], SIZE.rv[3]]);
-
         // G
-        this._drawElement(scale, PATHS.g, this._theme.g, [SIZE.g[0], SIZE.g[1], SIZE.g[0], SIZE.g[3]])
+        this._drawElement(scale, [c,0], PATHS.g, this._theme.g, [SIZE.g[0], SIZE.g[1], SIZE.g[0], SIZE.g[3]])
+
 
         // BAR
         if (x >= SIZE.minBarWidth) {
-            let barpath = this._theme.barpath || PATHS.bar;
-            this._drawElement(scale, barpath, this._theme.bar, [SIZE.bar[0], SIZE.bar[1], SIZE.bar[2], SIZE.bar[1]])
+            if (this._fill) {
+                let barpath = new Path2D(`M0,${fh-32}H${fw}v16a16 16 0 0 1-16 16H16a16 16 0 0 1-16-16Z`);
+                this._drawElement(scale, null, barpath, this._theme.bar, [0, 0, fw, 0])
+            } else {
+                let barpath = this._theme.barpath || PATHS.bar;
+                this._drawElement(scale, null, barpath, this._theme.bar, [SIZE.bar[0], 0, SIZE.bar[2], 0])
+            }
         }
 
         // TEXT
         if (x >= SIZE.minTextWidth) {
+            if (this._fill) {
+                this._ctx.save();
+                this._ctx.transform(1, 0, 0, 1 , (fw/2)-((SIZE.viewbox[2]-SIZE.viewbox[0])/2), fh-256);
+            }
             if (this._theme.text instanceof Array) {
-                this._ctx.fillStyle = this._createSoftLinearGradient(SIZE.bar[0], SIZE.bar[1], SIZE.bar[2], SIZE.bar[1], this._theme.text);
+                this._ctx.fillStyle = this._createSoftLinearGradient(SIZE.text[0], SIZE.text[1], SIZE.text[2], SIZE.text[1], this._theme.text);
             } else {
                 this._ctx.fillStyle = this._theme.text;
             }
             this._ctx.fillStyle = this._theme.text;
             this._ctx.fill(PATHS.text);
+            if (this._fill) {
+                this._ctx.restore();
+            }
         }
 
+        this._ctx.restore();
+
+        //this._drawTestGrid();
+    }
+
+    _drawTestGrid() {
+        this._ctx.save();
+
+        let w = this._ctx.canvas.width;
+        let h = this._ctx.canvas.height;
+
+        let x = Math.min(w, h);
+        let size = x / 8;
+        let countw = w / size | 0;
+        let counth = h / size | 0;
+        let vpath = new Path2D(`m0,0V${h}`);
+        let hpath = new Path2D(`m0,0H${w}`);
+        this._ctx.lineWidth = 1;
+        this._ctx.strokeStyle = '#00FFFF';
+        for (let i = 0; i <= countw; i++) {
+            this._ctx.setTransform(1, 0, 0, 1, size * i, 0);
+            this._ctx.stroke(vpath);
+        }
+        for (let i = 0; i < counth; i++) {
+            this._ctx.setTransform(1, 0, 0, 1, 0, size * i);
+            this._ctx.stroke(hpath);
+        }
+        this._ctx.strokeStyle = '#FF0000';
+        this._ctx.setTransform(1,0,0,1,w/2,0);
+        this._ctx.stroke(vpath);
+        this._ctx.setTransform(1,0,0,1,0,h/2);
+        this._ctx.stroke(hpath);
         this._ctx.restore();
     }
 
     /**
      * Full definition for drawing an element. For plain elements with solid color fill and no outline, this causes extra checks. 
      * @private
-     * @param {Number} scale                         of the context.
-     * @param {Path2D} path                          of the shape to draw.
-     * @param {(COLOR|GRADIENT)} style               to color fill of the path.
-     * @param {GRADIENT_SIZE} [gradientSize]         to specify the direction of the gradient.
-     * @param {Number} [outlineWidth]                of the path. This is an outside stroke width.
-     * @param {(COLOR|GRADIENT)} [outlineStyle]      to color the outline fo the path.
-     * @param {GRADINET_SIZE} [outlineGradientSize]  to specify the direction of the gradinet.
+     * @param {Number} scale                         The scale to draw at.
+     * @param {OFFSET} offset                        The offset within the scaled units to draw at.
+     * @param {Path2D} path                          The path to draw.
+     * @param {(COLOR|GRADIENT)} style               The fill color of the path.
+     * @param {GRADIENT_SIZE} [gradientSize]         The gradient coordinates in the scaled units.
+     * @param {Number} [outlineWidth]                The width of the outside stroke.
+     * @param {(COLOR|GRADIENT)} [outlineStyle]      The fill color of the outline.
+     * @param {GRADINET_SIZE} [outlineGradientSize]  The gradient coordinates of the outline in the scaled units.
      */
-    _drawElement(scale, path, style, gradientSize, outlineWidth, outlineStyle, outlineGradientSize) {
+    _drawElement(scale, offset, path, style, gradientSize, outlineWidth, outlineStyle, outlineGradientSize) {
+        let o = [0, 0];
+        if (offset) {
+            o = offset;
+        };
         if (outlineWidth) {
             if (!gradientSize) {
                 gradientSize = [0, 0, this._ctx.width, this._ctx.height];
@@ -164,7 +256,7 @@ class GRLogo extends HTMLElement {
             this._bctx.save();
             this._bctx.setTransform(1, 0, 0, 1, 0, 0);
             this._bctx.clearRect(0, 0, this._bctx.canvas.width, this._bctx.canvas.height);
-            this._bctx.setTransform(scale, 0, 0, scale, 0, 0);
+            this._bctx.setTransform(scale, 0, 0, scale, o[0], o[1]);
             if (outlineStyle instanceof Array) {
                 if (!outlineGradientSize) {
                     outlineGradientSize = gradientSize;
@@ -193,7 +285,10 @@ class GRLogo extends HTMLElement {
         } else {
             this._ctx.fillStyle = style;
         }
+        this._ctx.save();
+        this._ctx.setTransform(scale, 0, 0, scale, o[0], o[1]);
         this._ctx.fill(path);
+        this._ctx.restore();
     }
 
     /**
@@ -217,9 +312,20 @@ class GRLogo extends HTMLElement {
      * @private
      */
     _resize() {
-        let x = Math.max(this.clientWidth, this.clientHeight);
-        this._ctx.canvas.width = x;
-        this._ctx.canvas.height = x;
+        if (this._fill) {
+            this._ctx.canvas.width = this.clientWidth;
+            this._ctx.canvas.height = this.clientHeight;
+            // Prevents streatching on resizing.
+            this._ctx.canvas.style.width = this.clientWidth + 'px';
+            this._ctx.canvas.style.height = this.clientHeight + 'px';
+        } else {
+            let x = Math.min(this.clientWidth, this.clientHeight);
+            this._ctx.canvas.width = x;
+            this._ctx.canvas.height = x;
+            this._ctx.canvas.style.width = x + 'px';
+            this._ctx.canvas.style.height = x + 'px';
+        }
+
         // Backbuffer always resized in draw.
         // this._bctx.canvas.width = x;
         // this._bctx.canvas.height = x;
@@ -282,6 +388,17 @@ class GRLogo extends HTMLElement {
 }
 
 /**
+ * The attributes used by the element.
+ * @enum {String}
+ */
+const ATTRIBUTES = {
+    /** Sets the theme of the logo. */
+    theme: 'theme',
+    /** Lets the background resize to fill the space instead of a square. */
+    fill: 'fill'
+}
+
+/**
  * The bounding box of a path within the overall path's size.
  * @typedef BOUNDINGBOX
  * @private
@@ -330,6 +447,7 @@ const SIZE = {
     viewbox: [0, 0, 256, 256],
     basev: [0, 0, 256, 224],
     basef: [0, 0, 256, 256],
+    gr: [32, 32, 192, 192],
     g: [32, 32, 192, 192],
     rv: [59, 64, 224, 224],
     rf: [59, 64, 224, 236],
@@ -476,6 +594,7 @@ const THEMES = {
         text: 'transparent'
     },
     blackwhite: {
+        fill: false, // This theme cannot be scaled.
         base: 'transparent',
         g: '#000000',
         r: '#FFFFFF',

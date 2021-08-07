@@ -12,29 +12,25 @@
                 display: flex;
                 justify-content: center;
                 align-content: center;
-                height: 100%;
+                width: 100%; height: 100%;
                 margin: 0 auto;
+                background: #00b4b4;
             }
-            gr-logo {box-sizing: border-box; width: 100%; height: 0%; padding-top: 100%;}
+            gr-logo {width: 100%; height: 100%;}
         </style>
     </head>
     <body>
     <main><gr-logo theme="original"></gr-logo></main>
     <script nonce="%nonce%">
         (function() {
-            let fixSizes = function() {
+            let addpadding = function() {
                 let main = document.querySelector('main');
-                if (document.body.clientWidth > document.body.clientHeight) {
-                    main.style.width = document.body.clientHeight + 'px';
-                } else {
-                    main.style.width = null;
-                }
                 let padding = document.querySelector('gr-logo').padding | 0;
                 main.style.padding = padding + 'px';
             };
-            let observer = new ResizeObserver(fixSizes);
+            let observer = new ResizeObserver(addpadding);
             observer.observe(document.querySelector('main'));
-            setTimeout(fixSizes, 100);
+            setTimeout(addpadding, 100);
         })();
     </script>
     </body>
