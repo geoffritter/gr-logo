@@ -1,6 +1,18 @@
 docs/
 .vscode/
 node_modules/
-*.tgz
 yarn.lock
 package-lock.json
+
+# Ignore packages
+*.tgz
+*.gz
+
+# Ignore LaTeX files.
+*.aux
+*.fls
+*.out
+*.log
+*.fdb_latexmk
+*.xdv
+svg-inkscape/
