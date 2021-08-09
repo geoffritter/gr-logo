@@ -51,51 +51,79 @@ class GRLogo extends HTMLElement {
     }
 
     /**
-     * Sets the theme of the logo to one of the supported values.
+     * Gets an enumeration of theme names that this element supports.
+     * @returns {THEME_NAME}
+     */
+    get themes() { return THEME_NAME; }
+
+    /**
+     * Sets the theme to one of the supported values.
      * @param {THEME_NAME} theme The name of the theme to set.
      */
     set theme(theme) {
         let lastTheme = this._theme || THEMES.original;
-        if (theme == THEME_NAME.random) {
+        if (theme === 'random') {
             let keys = Object.keys(THEME_NAME);
+            let index = Math.random() * keys.length - 1 | 0;
             // Exclude the test theme and assume it's the last theme defined.
-            let selected = keys[Math.random() * (keys.length - 1) | 0];
+            let selected = keys[index];
             if (selected === THEME_NAME.test) {
-                selected === lastTheme
+                selected === lastTheme.name;
+            }
+            // Always select a new theme.
+            if (selected === lastTheme.name) {
+                index = index === keys.length - 2 ? 0 : index + 1;
+                selected = keys[index];
             }
             this._theme = THEMES[selected] || lastTheme;
         } else {
-            let t = THEME_NAME[theme];
-            this._theme = THEMES[t] || lastTheme;
+            this._theme = THEMES[THEME_NAME[theme]] || lastTheme;
         }
         if (this._theme.fill === false) {
             this._fill = false;
+        } else {
+            let fill = this.getAttribute(ATTRIBUTES.fill);
+            this._fill = fill !== null && fill !== 'false';
         }
         if (this._ctx && !this._animating) {
-            this._draw();
+            this._resize();
         }
     }
 
     /**
-     * Gets the current fill state.
+     * Gets the current fill state. This may be different from the attribute set on the element if the theme is not
+     * compatible with the fill mode.
+     * @returns {bool|string} True/false if the fill mode is on/off. 'disabled' if the theme does not allow a fill.
      */
     get fill() {
-        return this._fill;
+        return this._theme.fill === false ? 'disabled' : this._fill;
     }
 
     /**
      * Returns the size of the canvas inside the element.
+     * @returns {number[]} An array of [width, height].
      */
     get size() {
         return [this._ctx.canvas.clientWidth, this._ctx.canvas.clientHeight];
     }
 
     /**
-     * Gets the margin width required by the logo styleguide.
+     * Get the expected padding for the logo's current width and height.
+     * @returns {number} The expected padding in pixels.
      */
     get padding() {
-        let size = Math.min(this.clientWidth, this.clientHeight);
-        return size / 8;
+        return Math.min(this.clientWidth, this.clientHeight) / 8 | 0;
+    }
+
+    /**
+     * Returns the expected padding of the logo given the width and height.
+     * @param {number} width width of the space to fill including padding.
+     * @param {number} height height of the space to fill including padding.
+     * @returns {number} The expected padding for the logo in pixels to fill the space with the logo and that padding.
+     */
+    getPaddingIf(width, height) {
+        let size = Math.min(width, height);
+        return size / 10 | 0;
     }
 
     static get observedAttributes() { return Object.keys(ATTRIBUTES); }
@@ -109,7 +137,7 @@ class GRLogo extends HTMLElement {
                 if (this._theme && this._theme.fill === false) {
                     this._fill = false;
                 } else {
-                    this._fill = (newValue !== null || newValue !== 'true');
+                    this._fill = newValue !== null && newValue !== 'false';
                 }
                 this._resize();
                 break;
@@ -159,7 +187,7 @@ class GRLogo extends HTMLElement {
         // The GR should be centered horizontally in landscape and fill the height.
         // In portrait, the GR should fill the width and be spaced at the top normally.
         // (Total width - Scaled Viewbox Width) / 2
-        let c = w > h ? (w - ((SIZE.viewbox[2] - SIZE.viewbox[0]) * scale) ) / 2 : 0;
+        let c = this._fill && w > h ? (w - ((SIZE.viewbox[2] - SIZE.viewbox[0]) * scale) ) / 2 : 0;
         // R
         this._drawElement(scale, [c,0], PATHS.r, this._theme.r, [SIZE.rv[0], SIZE.rv[1], SIZE.rv[0], SIZE.rv[3]],
             this._theme.routlinew, this._theme.routlines, [SIZE.rv[0], SIZE.rv[1], SIZE.rv[0], SIZE.rv[3]]);
@@ -312,19 +340,11 @@ class GRLogo extends HTMLElement {
      * @private
      */
     _resize() {
-        if (this._fill) {
-            this._ctx.canvas.width = this.clientWidth;
-            this._ctx.canvas.height = this.clientHeight;
-            // Prevents streatching on resizing.
-            this._ctx.canvas.style.width = this.clientWidth + 'px';
-            this._ctx.canvas.style.height = this.clientHeight + 'px';
-        } else {
-            let x = Math.min(this.clientWidth, this.clientHeight);
-            this._ctx.canvas.width = x;
-            this._ctx.canvas.height = x;
-            this._ctx.canvas.style.width = x + 'px';
-            this._ctx.canvas.style.height = x + 'px';
-        }
+        this._ctx.canvas.width = this.clientWidth;
+        this._ctx.canvas.height = this.clientHeight;
+        // Prevents streatching on resizing.
+        this._ctx.canvas.style.width = this.clientWidth + 'px';
+        this._ctx.canvas.style.height = this.clientHeight + 'px';
 
         // Backbuffer always resized in draw.
         // this._bctx.canvas.width = x;
@@ -520,6 +540,7 @@ export const THEME_NAME = {
  */
 const THEMES = {
     original: {
+        name: 'original',
         base: '#B40000',
         g: '#000000',
         r: '#FFFFFF',
@@ -527,6 +548,7 @@ const THEMES = {
         text: '#FFFFFF'
     },
     playfull: {
+        name: 'playfull',
         base: '#00A0E3',
         g: '#FF78FF',
         r: '#FFB400',
@@ -534,6 +556,7 @@ const THEMES = {
         text: '#F7F7F7'
     },
     classy: {
+        name: 'classy',
         base: '#B40000',
         g: '#000000',
         r: '#FFFFFF',
@@ -544,6 +567,7 @@ const THEMES = {
         text: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
     },
     rainbow: {
+        name: 'rainbow',
         base: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
         g: '#000000',
         r: '#FFFFFF',
@@ -551,13 +575,15 @@ const THEMES = {
         text: '#FFFFFF'
     },
     philadelphia: {
-        base: '#794E0F',
+        name: 'philadelphia',
+        base: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
         g: '#000000',
-        r: ['#E50000', '#FF8D00', '#FFEE00', '#028121', '#004CFF', '#770088'],
+        r: '#794E0F',
         bar: '#000000',
         text: '#FFFFFF'
     },
     transgender: {
+        name: 'transgender',
         base: ['#5BCFFB', '#F5ABB9', '#FFFFFF', '#F5ABB9', '#5BCFFB'],
         g: '#000000',
         r: '#FFFFFF',
@@ -567,6 +593,7 @@ const THEMES = {
         text: '#FFFFFF'
     },
     intersex: {
+        name: 'intersex',
         base: '#FFD800',
         g: '#7902AA',
         r: '#FFD800',
@@ -576,6 +603,8 @@ const THEMES = {
         text: '#F7F7F7'
     },
     other: {
+        name: 'other',
+        fill: false, // This theme cannot be scaled... yet.
         base: '#6BD6F7',
         base2path: new Path2D('M251.31371,4.68629A16 16 0 0 1 256 16V224H0Z'),
         base2: '#F9B2DB',
@@ -585,6 +614,7 @@ const THEMES = {
         text: '#FFFFFF'
     },
     gr: {
+        name: 'gr',
         base: 'transparent',
         g: '#000000',
         r: '#FFFFFF',
@@ -594,7 +624,8 @@ const THEMES = {
         text: 'transparent'
     },
     blackwhite: {
-        fill: false, // This theme cannot be scaled.
+        name: 'blackwhite',
+        fill: false, // This theme cannot be scaled per style guide.
         base: 'transparent',
         g: '#000000',
         r: '#FFFFFF',
@@ -606,6 +637,7 @@ const THEMES = {
     },
     // Contains a full static feature test.
     test: {
+        name: 'test',
         base: ['#888888', '#AAAAAA'],
         base2path: new Path2D('M251.31371,4.68629A16 16 0 0 1 256 16V224H0Z'),
         base2: ['#888833', '#AAAA88'],
