@@ -4,34 +4,34 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>GR Logo</title>
-        <script src="gr-logo/gr-logo.js" type="module" defer></script>
-        <style>
-            html, body {width: 100%; height: 100%; margin: 0; padding: 0;}
-            main {
-                box-sizing: border-box;
-                display: flex;
-                justify-content: center;
-                align-content: center;
-                width: 100%; height: 100%;
-                margin: 0 auto;
-                background: #00b4b4;
+        <style id="variables">
+            :root {
+                --gr-logo-padding: 32px;
+                --gr-logo-half-padding: 16px;
+                --gr-logo-quarter-padding: 8px;
             }
-            gr-logo {width: 100%; height: 100%;}
         </style>
+        <link rel="stylesheet" href="main.css">
+        <script src="gr-logo/gr-logo.js" type="module" defer></script>
+        <script src="main.js" type="module" defer></script>
     </head>
     <body>
-    <main><gr-logo theme="original"></gr-logo></main>
-    <script nonce="%nonce%">
-        (function() {
-            let addpadding = function() {
-                let main = document.querySelector('main');
-                let padding = document.querySelector('gr-logo').padding | 0;
-                main.style.padding = padding + 'px';
-            };
-            let observer = new ResizeObserver(addpadding);
-            observer.observe(document.querySelector('main'));
-            setTimeout(addpadding, 100);
-        })();
-    </script>
+    <main>
+        <h1>GR Logo</h1>
+        <p>This is Geoff Ritter's personal logo containing a squared G with rounded corners and an intertwined reversed
+        R on a square background with rounded corners. At the bottom is a bar containing, in all capital letters, the
+        words GEOFF RITTER. This WebComponent aims to implement the full logo styleguide and can be used anywhere you
+        would want a high resolution svg logo on the web. If instead, you are looking for the main variants of the logo
+        in pure svg, then check the src folder for this project.</p>
+        <form id="controls">
+            <fieldset><label for="theme">Theme</label>
+            <select id="theme" name="theme"><option value="original">original</option></select>
+            </fieldset>
+            <fieldset><label for="fill">Fill</label>
+                <input id="fill" name="fill" type="checkbox"/>
+            </fieldset>
+        </form>
+        <gr-logo theme="original"></gr-logo>
+    </main>
     </body>
 </html>

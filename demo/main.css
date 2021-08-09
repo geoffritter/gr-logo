@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+html, body {width: 100%; height: 100%; margin: 0; padding: 0;}
+main {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    justify-content: center;
+    align-content: center;
+    width: 100%; height: 100%;
+    margin: 0 auto;
+    background: #00b4b4;
+    font-family: 'Libre Sans', 'Open Sans', sans-serif;
+    padding: var(--gr-logo-quarter-padding) var(--gr-logo-padding) var(--gr-logo-half-padding);
+}
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-variant: small-caps;
+    margin: 0 0 var(--gr-logo-quarter-padding) 0;
+}
+p {
+    margin: 0 0 var(--gr-logo-quarter-padding) 0;
+    display: none;
+}
+@media (min-width: 512px) and (min-height: 800px) and (orientation: portrait) {
+    p { display: block; }
+}
+@media (min-width: 800px) and (min-height: 720px) and (orientation: landscape) {
+    p { display: block; }
+}
+
+fieldset {
+    outline: none;
+    border: none;
+    display: inline-block;
+    margin: 0 0 var(--gr-logo-quarter-padding) 0;
+    padding: 0;
+}
+fieldset:disabled label {
+    color: #666666;
+}
+fieldset:disabled::after {
+    content: 'This theme cannot have fill mode enabled.';
+    color: #300;
+}
+gr-logo {align-self: center; width: 100%; height: 100%;}
