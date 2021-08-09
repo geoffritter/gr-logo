@@ -19,8 +19,9 @@
   "config": {
     "http": "demo",
     "port": "8000",
-    "websocketport": "8001",
-    "watch": true
+    "watch": true,
+    "watchdirs": "demo:src",
+    "websocketport": "8001"
   },
   "devDependencies": {
     "ws": "^8.0.0"

@@ -4,9 +4,16 @@ import fs from 'fs';
 import crypto from 'crypto';
 
 let srvpath = process.env.npm_package_config_http;
-let watch = process.env.npm_package_config_watch;
 let port = process.env.npm_package_config_port;
+let watch = process.env.npm_package_config_watch;
 let websocketPort = process.env.npm_package_config_websocketport;
+
+let watchdirs = process.env.npm_package_config_watchdirs;
+if (watchdirs) {
+  watchdirs = watchdirs.split(':');
+} else {
+  watchdirs = srvpath;
+}
 
 
 const mimeTypes = {
@@ -66,49 +73,55 @@ const reloaderScriptHash = (() => {
           });
       };
 
-      // Watch source directory changes and notify WebSocket clients.
-      try {
-        // Windows/OSX support recurisve directory watching.
-        fs.watch(process.cwd(), { recursive: true }, notifyClients);
-      } catch (err) {
-        if (err.code === 'ERR_FEATURE_UNAVAILABLE_ON_PLATFORM') {
-          // Workaround for unsupported fs.watch recursive.
-          let watchDirs = (function getAllDirs(dirPath, list) {
-            fs.readdirSync(dirPath, {withFileTypes: true})
-              .forEach(file => {
-                if (file.isDirectory()) {
-                  let nextDirPath = path.join(dirPath, file.name);
-                  list.push(nextDirPath);
-                  list = getAllDirs(nextDirPath, list);
+      let watchDirectory = dir => {
+        let fullpath = path.join(process.cwd(), dir);
+        // Watch source directory changes and notify WebSocket clients.
+        try {
+          // Windows/OSX support recurisve directory watching.
+          fs.watch(fullpath, { recursive: true }, notifyClients);
+        } catch (err) {
+          if (err.code === 'ERR_FEATURE_UNAVAILABLE_ON_PLATFORM') {
+            // Workaround for unsupported fs.watch recursive.
+            let watchThem = (function getAllDirs(dirPath, list) {
+              fs.readdirSync(dirPath, {withFileTypes: true})
+                .forEach(file => {
+                  if (file.isDirectory()) {
+                    let nextDirPath = path.join(dirPath, file.name);
+                    list.push(nextDirPath);
+                    list = getAllDirs(nextDirPath, list);
+                  }
+                });
+              return list;
+            })(fullpath, [fullpath]);
+            watchThem.forEach(function watchDirAndNotifyClients(dir) {
+              fs.watch(dir, { recursive: false }, (type, filename) => {
+                // Add a new directory to watch.
+                if (type === 'rename') {
+                  // Warning: Some rename events dir will already contain filename. This only happens on deletes which would
+                  // already be accounted for by isDirectory. I'm sure this could be made better.
+                  let filepath = path.join(dir, filename);
+                  try {
+                    if (fs.statSync(filepath).isDirectory()) {
+                      watchDirAndNotifyClients(filepath);
+                    }
+                  } catch (err) {
+                    if (err.code === 'ENOENT') {
+                      // The file was removed.  If it was a directory, I assume the watcher was as well.
+                      (()=>{})('noop');
+                    }
+                  }
                 }
+                notifyClients();
               });
-            return list;
-          })(process.cwd(), [process.cwd()]);
-          watchDirs.forEach(function watchDirAndNotifyClients(dir) {
-            fs.watch(dir, { recursive: false }, (type, filename) => {
-              // Add a new directory to watch.
-              if (type === 'rename') {
-                // Warning: Some rename events dir will already contain filename. This only happens on deletes which would
-                // already be accounted for by isDirectory. I'm sure this could be made better.
-                let filepath = path.join(dir, filename);
-                try {
-                  if (fs.statSync(filepath).isDirectory()) {
-                    watchDirAndNotifyClients(filepath);
-                  }
-                } catch (err) {
-                  if (err.code === 'ENOENT') {
-                    // The file was removed.  If it was a directory, I assume the watcher was as well.
-                    (()=>{})('noop');
-                  }
-                }
-              }
-              notifyClients();
             });
-          });
+          }
         }
+      };
+      for (let dir in watchdirs) {
+        watchDirectory(watchdirs[dir]);
       }
     });
-}})(watch);
+}})();
 
 
 const server = http.createServer((request, response) => {
