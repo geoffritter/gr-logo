@@ -25,7 +25,7 @@
             <dc:title>© 2005 Geoff Ritter, All rights reserved.</dc:title>
           </cc:Agent>
         </dc:rights>
-        <dc:description>Geoff Ritter's personal logo containing a squared G with rounded corners and an intertwined reversed R on a horizontal rectangle background with rounded corners. At the bottom is a bar containing, in all capital letters, the words GEOFF RITTER</dc:description>
+        <dc:description>Geoff Ritter's personal logo containing a squared G with rounded corners and an intertwined reversed R on a horizontal rectangle background with rounded corners. At the bottom is a bar containing, in all capital letters, the words GEOFF RITTER.</dc:description>
         <dc:publisher>
           <cc:Agent>
             <dc:title>Geoff Ritter</dc:title>
@@ -38,7 +38,7 @@
           </rdf:Bag>
         </dc:subject>
         <dc:relation>https://geoffritter.com/logo/styleguide.html</dc:relation>
-        <dc:source>https://geoffritter.com/logo/gr-logo-horizontal.svg</dc:source>
+        <dc:source>https://geoffritter.com/logo/gr-logo.svg</dc:source>
       </cc:Work>
     </rdf:RDF>
   </metadata>

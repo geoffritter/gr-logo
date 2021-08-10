@@ -37,7 +37,7 @@
           </rdf:Bag>
         </dc:subject>
         <dc:relation>https://geoffritter.com/logo/styleguide.html</dc:relation>
-        <dc:source>https://geoffritter.com/logo/gr-logo-gr.svg</dc:source>
+        <dc:source>https://geoffritter.com/logo/gr-logo.svg</dc:source>
       </cc:Work>
     </rdf:RDF>
   </metadata>
