@@ -1,11 +1,10 @@
 \documentclass{logo_styleguide}
 \author{Geoff Ritter}
-\title{Resume}
+\title{Geoff Ritter's GR Logo and Branding Style Guide}
 \date{\today}
 
 % Set variables
 \sethomepage{geoffritter.com/logo/styleguide.html}
-\setlogopath{../src/gr-logo.svg}
 
 \makeatletter
 \hypersetup{
@@ -19,12 +18,18 @@
 \makeatother
 
 \begin{document}
-\header
+
+\mytitle
+\logodesign
+
+
 
 \section{General Logo Design}
 The logo is based on a uniform square design where the rounded corners are 10 percent rounding of a square that forms
-the G. Everything about the core design of the logo is structured, precise and mathmatical. Each element is an important
+the \gchar. Everything about the core design of the logo is structured, precise and mathmatical. Each element is an important
 piece of the puzzle that produces an overall solution.
+
+
 
 \section{Color Of Logo}
 The colors of the logo are:
@@ -40,10 +45,14 @@ The colors of the logo are:
 
 Other variants of the logo colors can not be made without explicit permission from Geoff Ritter.
 
+
+
 \section{Space around Logo}
 There should be sufficient space around the logo to keep with the style of the logo. This means that spacing around the
 logo should be 1/8th the width of the logo, or a multiple of that. Non-uniform widths can be used as long as the minimum
-spacing it is at least 1/8th the width of the logo.
+spacing it is at least 1/8th the width of the logo. If the logo is extra large and feels out of place, smaller widths
+may be used.
+
 
 
 \section{Brand Typography}
@@ -63,13 +72,18 @@ Open Sans & Any normal text\\
 \end{tabular}
 
 
+
+%\section{Brand Color Palette}
+
+
+
 \section{Logo Font}
 
 \begin{itemize}
-    \item The "GEOFF RITTER" on the logo must be all capital letters and can be in any 'normal' 700 weight bold sans-serif font; Montserrat is prefered.
-    \item The "GEOFF RITTER" on the logo must not appear on sizes smaller than 160 pixels or 1 inch printed. The text
+    \item The "\headingfont GEOFF RITTER\normalfont" on the logo must be all capital letters and can be in any 'normal' 700 weight bold sans-serif font; Montserrat is prefered.
+    \item The "\headingfont GEOFF RITTER\normalfont" on the logo must not appear on sizes smaller than 160 pixels or 1 inch printed. The text
     must always be present when it is at least that size.
-    \item The "GEOFF RITTER" must be kerned so that the start and end are 1/24th to the left and right of the logo
+    \item The "\headingfont GEOFF RITTER\normalfont" must be kerned so that the start and end are 1/24th to the left and right of the logo
     allowing for standard curved edge overlap. The spacing above and below the letters must feel appropriate for the
     font used.
     \item The black bar at the bottom must not appear on the logo when it is smaller than 65 pixels or 0.5 inchs
@@ -78,43 +92,58 @@ Open Sans & Any normal text\\
 \end{itemize}
 
 
-\section{Brand Color Palette}
-
 
 \section{Black and White variant}
 When a black and white logo is needed, the black and white variant should be used.
 \begin{itemize}
     \item There must be no background and no outline around the logo.
-    \item The R must contain an outline stroke that is 1/32 the thickness of the square design.
+    \item The \rchar\hspace{0.125em} must contain an outline stroke that is 1/32 the thickness of the square design.
     \item The basebar with text is optional. If it is included, it should retain it's dimensions but the top corners should be rounded evenly with the bottom.
+    \item When displayed without the bar, the tip of the \rchar's leg comes to a point.
 \end{itemize}
 
-NOTE! the tip of the R extends to a point behind the black bar. When the black bar is not included, this tip must be visible unless the logo is resting on something else that would take the place of the bar.
+\logoblackwhite
+
 
 
 \section{Resizing}
 The logo can be resized to rectangular dimensions as long as some rules are followed:
 \begin{itemize}
-    \item The rounded corners must not be skewed or distorted beyond the circular shape and must match the rounding on the GR.
-    \item The GR must not be skewed or otherwise distored in anyway.
-    \item The thickness of the bar at the bottom must be kept the thickness 1/8th of the square design and match the line thickeness of the G.
-    \item The GR must be centered horizontally and spaced away from the top by 1/8th of the original square design and match the line thickeness of the G. This will let the GR float above the bar at the bottom.
-    \item When the GR is floating, the leg of the R must come to a point and not be squared off.
-    \item The rounding may be removed to fill the size of the print. If using rounded off paper, it can match the rounding of the GR or be smaller.
+    \item The rounded corners must not be skewed or distorted beyond the circular shape and must match the rounding on the \grchar.
+    \item The \grchar\hspace{0.125em} must not be skewed or otherwise distored in anyway.
+    \item The thickness of the bar at the bottom must be kept the thickness 1/8th of the square design and match the line thickeness of the \gchar.
+    \item The \grchar\hspace{0.125em} must be centered horizontally and spaced away from the top by 1/8th of the original square design and match the line thickeness of the \gchar. This will let the \grchar\hspace{0.125em} float above the bar at the bottom.
+    \item When the \rchar\hspace{0.125em} is floating, the leg of the \rchar\hspace{0.125em} must come to a point and not be squared off.
+    \item The rounding may be removed to fill the size of the print. If using rounded off paper, it can match the rounding of the \grchar\hspace{0.125em} or be smaller.
 \end{itemize}
+
+\logoresizing
+
 
 
 \section{Logo Warping}
-Distoring or streaching the GR, text at the bottom, or the height of the bar in relation to the GR is never allowed for static images.
+Distoring or streaching the \grchar, text at the bottom, or the height of the bar in relation to the
+\grchar\hspace{0.125em} is never allowed for static images.
+
+\logowarped
+
 
 
 \section{Logo Outline}
-Don't do it.
+\begin{itemize}
+    \item Don't do it.
+    \item An outline stroke is NOT permitted under any circumstances.
+    \item The logo must never be outlined.
+    \item In the event that it is outlined, it must be an \textbf{inside stroke} and the thickness should be 1/32th or 1/64th of the original square design. This variant can only be used in black and white.
+\end{itemize}
 
-An outline stroke is NOT permitted under any circumstances. The logo must never be outlined. In the event that it is outlined, it must be an inside stroke and the thickness should be 1/32th or 1/64th of the original square design. This variant must never be used in black and white.
+\logooutlined
+
+
 
 \section{Other Variants}
-Do not re-color the logo to anything else other than what is defined in this document. Any variants of the color must be approved by Geoff Ritter.
+Do not re-color the logo to anything else other than what is defined in this document. Any variants of the color must be
+approved by Geoff Ritter. The variants available on the WebComponent can only be used with the WebComponent.
 
 
 \end{document}
