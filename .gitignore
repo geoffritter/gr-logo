@@ -16,3 +16,13 @@ package-lock.json
 *.fdb_latexmk
 *.xdv
 svg-inkscape/
+# Ignore Tex4ht files.
+*.4ct
+*.4tc
+*.idv
+*.lg
+*.tmp
+*.xref
+*.dvi
+styleguide/styleguide.html
+styleguide/styleguide.css
