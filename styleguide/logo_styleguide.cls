@@ -3,7 +3,6 @@
 \ProvidesClass{logo_styleguide}[2021/08/06 Logo Styleguide Class]
 
 \RequirePackage[sfdefault]{noto}
-\RequirePackage{fontspec}
 \RequirePackage{titlesec}
 \RequirePackage{hyperref}
 \RequirePackage{fontawesome}

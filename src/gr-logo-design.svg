@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
+   id="gr-logo-design"
    viewBox="0 0 1061.8794 426.61133"
    version="1.1"
-   id="gr-logo-design"
    sodipodi:docname="gr-logo-design.svg"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -16,27 +16,6 @@
      id="defs" />
   <sodipodi:namedview
      id="namedview"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     showgrid="false"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:snap-bbox="true"
-     inkscape:object-paths="true"
-     inkscape:snap-intersection-paths="true"
-     inkscape:snap-smooth-nodes="true"
-     inkscape:zoom="1.6940527"
-     inkscape:cx="813.13881"
-     inkscape:cy="258.25643"
-     inkscape:window-width="3440"
-     inkscape:window-height="1371"
-     inkscape:window-x="0"
-     inkscape:window-y="32"
-     inkscape:window-maximized="1"
      inkscape:current-layer="gr-logo-design" />
   <title
      id="title">GR Logo Design Diagram</title>

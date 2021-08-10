@@ -4,8 +4,6 @@
    viewBox="0 0 1041.2223 614.90161"
    version="1.1"
    sodipodi:docname="gr-logo-warped.svg"
-   width="1041.2223"
-   height="614.90161"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -18,33 +16,7 @@
      id="defs" />
   <sodipodi:namedview
      id="namedview"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     showgrid="false"
-     inkscape:object-paths="true"
-     inkscape:snap-intersection-paths="true"
-     inkscape:snap-bbox="true"
-     inkscape:bbox-paths="true"
-     inkscape:bbox-nodes="true"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:zoom="1"
-     inkscape:cx="520.5"
-     inkscape:cy="307.5"
-     inkscape:window-width="3440"
-     inkscape:window-height="1371"
-     inkscape:window-x="0"
-     inkscape:window-y="32"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="vertical" />
+     inkscape:current-layer="gr-logo-warped" />
   <title
      id="title">GR Logo</title>
   <desc
@@ -188,5 +160,5 @@
   <path
      id="crossout"
      style="stroke:#ff00fc;stroke-width:8"
-     d="M 2.022878,3.4507919 1039.1994,611.45079 m -1037.176522,0 L 1039.1994,3.4507919" />
+     d="M 2.0228779,3.4507919 1039.1994,611.45079 m -1037.1765221,0 L 1039.1994,3.4507919" />
 </svg>
